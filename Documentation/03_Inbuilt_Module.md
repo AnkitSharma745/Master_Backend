@@ -6,13 +6,13 @@
 2. [File System (fs) Module](#2-file-system-fs-module-in-nodejs)
 3. [Path Module](#3-path-module-in-nodejs)
 4. [URL Module](#4-url-module-in-nodejs)
-5. [Events Module](#5-event-module-node.js)
+5. [Events Module](#5-event-module-in-nodejs)
 6. [OS Module](#6-os-module-in-nodejs)
 7. [Process Module](#7-process-module-in-nodejs)
 8. [Stream and crypto](#8-stream-and-crypto-modules-in-nodejs)
-9. [Timers Module](#9-timers-module-in-node.js)
-10. [Cluster](#10-cluster-module-in-node.js)
-11. [Child Process](#11-child-process-module-in-node.js)
+9. [Timers Module](#9-timers-module-in-nodejs)
+10. [Cluster](#10-cluster-module-in-nodejs)
+11. [Child Process](#11-child-process-module-in-nodejs)
 
 # 1. HTTP Module in Node.js
 
