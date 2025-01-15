@@ -2,21 +2,17 @@
 
 ## Table of Contents
 
-1. [HTTP Module](#http-module)
-2. [File System (fs) Module](#file-system-module)
-3. [Path Module](#path-module)
-4. [URL Module](#url-module)
-5. [Events Module](#events-module)
-6. [OS Module](#os-module)
-7. [Process Module](#process-module)
-8. [Stream Module](#stream-module)
-9. [Crypto Module](#crypto-module)
-10. [Timers](#timers)
-11. [Cluster Module](#cluster-module)
-12. [Child Process Module](#child-process-module)
-13. [Util Module](#util-module)
-14. [QueryString Module](#querystring-module)
-15. [DNS Module](#dns-module)
+1. [HTTP Module](#1-http-module-in-nodejs)
+2. [File System (fs) Module](#2-file-system-fs-module-in-nodejs)
+3. [Path Module](#3-path-module-in-nodejs)
+4. [URL Module](#4-url-module-in-nodejs)
+5. [Events Module](#5-event-module-node.js)
+6. [OS Module](#6-os-module-in-nodejs)
+7. [Process Module](#7-process-module-in-nodejs)
+8. [Stream and crypto](#8-stream-and-crypto-modules-in-nodejs)
+9. [Timers Module](#9-timers-module-in-node.js)
+10. [Cluster](#10-cluster-module-in-node.js)
+11. [Child Process](#11-child-process-module-in-node.js)
 
 # 1. HTTP Module in Node.js
 
@@ -813,7 +809,7 @@ console.log(path.delimiter); // Output: : on POSIX, ; on Windows
 
 The `path` module is essential for file and directory path manipulations in Node.js. Its methods simplify working with paths across different platforms, ensuring compatibility and ease of use.
 
-# URL Module in Node.js
+# 4. URL Module in Node.js
 
 The `url` module in Node.js provides utilities for URL resolution and parsing. It is a core module and does not require installation.
 
@@ -1086,7 +1082,251 @@ console.log(myEmitter.listeners("event"));
 myEmitter.setMaxListeners(15);
 ```
 
-# OS Module in Node.js
+# 5. Event Module in Node.js
+
+The `events` module in Node.js allows you to work with event-driven programming by providing a way to create and handle custom events. This module is the foundation of the Node.js event-driven architecture.
+
+---
+
+## Core Concepts
+
+### 1. Event Emitter
+
+The `EventEmitter` class is at the core of the `events` module. Instances of this class emit named events and can be used to bind and listen to those events.
+
+#### Importing the Module
+
+```javascript
+const EventEmitter = require("events");
+```
+
+#### Example Usage
+
+```javascript
+const EventEmitter = require("events");
+const eventEmitter = new EventEmitter();
+
+// Register an event listener
+eventEmitter.on("greet", (name) => {
+  console.log(`Hello, ${name}!`);
+});
+
+// Emit an event
+eventEmitter.emit("greet", "Ankit");
+```
+
+---
+
+## Methods in EventEmitter
+
+### 1. `on()` or `addListener()`
+
+Adds a listener for the specified event.
+
+#### Syntax
+
+```javascript
+eventEmitter.on(event, listener);
+```
+
+- `event`: Name of the event.
+- `listener`: Callback function to execute when the event is emitted.
+
+#### Example
+
+```javascript
+eventEmitter.on("data", (message) => {
+  console.log(`Data received: ${message}`);
+});
+```
+
+---
+
+### 2. `emit()`
+
+Emits the specified event and invokes all the associated listeners.
+
+#### Syntax
+
+```javascript
+eventEmitter.emit(event, ...args);
+```
+
+- `event`: Name of the event to emit.
+- `...args`: Arguments to pass to the listeners.
+
+#### Example
+
+```javascript
+eventEmitter.emit("data", "This is a test message");
+```
+
+---
+
+### 3. `once()`
+
+Adds a one-time listener for the specified event. The listener is removed after the first event invocation.
+
+#### Syntax
+
+```javascript
+eventEmitter.once(event, listener);
+```
+
+#### Example
+
+```javascript
+eventEmitter.once("disconnect", () => {
+  console.log("Disconnected!");
+});
+
+eventEmitter.emit("disconnect"); // Listener invoked
+// Subsequent emits will not invoke the listener
+eventEmitter.emit("disconnect");
+```
+
+---
+
+### 4. `removeListener()` or `off()`
+
+Removes a specific listener for the specified event.
+
+#### Syntax
+
+```javascript
+eventEmitter.removeListener(event, listener);
+```
+
+- `event`: Name of the event.
+- `listener`: The specific listener to remove.
+
+#### Example
+
+```javascript
+const logData = (data) => console.log(data);
+
+eventEmitter.on("log", logData);
+eventEmitter.removeListener("log", logData);
+```
+
+---
+
+### 5. `removeAllListeners()`
+
+Removes all listeners for the specified event or all events.
+
+#### Syntax
+
+```javascript
+eventEmitter.removeAllListeners([event]);
+```
+
+#### Example
+
+```javascript
+eventEmitter.removeAllListeners("greet");
+```
+
+---
+
+### 6. `listeners()`
+
+Returns an array of listeners for the specified event.
+
+#### Syntax
+
+```javascript
+eventEmitter.listeners(event);
+```
+
+#### Example
+
+```javascript
+console.log(eventEmitter.listeners("data"));
+```
+
+---
+
+## Special Events
+
+### 1. `newListener`
+
+Triggered when a new listener is added.
+
+#### Example
+
+```javascript
+eventEmitter.on("newListener", (event, listener) => {
+  console.log(`Added listener for event: ${event}`);
+});
+```
+
+---
+
+### 2. `removeListener`
+
+Triggered when a listener is removed.
+
+#### Example
+
+```javascript
+eventEmitter.on("removeListener", (event, listener) => {
+  console.log(`Removed listener for event: ${event}`);
+});
+```
+
+---
+
+## Extending EventEmitter
+
+You can create custom classes that inherit from `EventEmitter`.
+
+#### Example
+
+```javascript
+const EventEmitter = require("events");
+
+class MyEmitter extends EventEmitter {}
+
+const myEmitter = new MyEmitter();
+myEmitter.on("event", () => {
+  console.log("An event occurred!");
+});
+
+myEmitter.emit("event");
+```
+
+---
+
+## EventEmitter Best Practices
+
+1. **Avoid Memory Leaks**:
+
+   - Use `removeListener()` or `removeAllListeners()` to clean up listeners.
+   - Node.js throws a warning if more than 10 listeners are added to a single event.
+
+2. **Use Descriptive Event Names**:
+
+   - Choose meaningful names for events to improve code readability.
+
+3. **Handle Errors Gracefully**:
+   - Add error listeners to prevent unhandled exceptions.
+
+#### Example
+
+```javascript
+eventEmitter.on("error", (err) => {
+  console.error("Error occurred:", err);
+});
+```
+
+---
+
+## Conclusion
+
+The `events` module is a powerful utility for building event-driven applications in Node.js. By leveraging `EventEmitter`, developers can create efficient, asynchronous systems.
+
+# 6. OS Module in Node.js
 
 The `os` module in Node.js provides a set of operating system-related utility methods and properties. It enables interaction with the underlying operating system and retrieves information such as the system's architecture, platform, and memory usage.
 
@@ -1335,7 +1575,7 @@ try {
 3. Access and analyze network interface details.
 4. Manage system resources and optimize applications.
 
-# Process Module in Node.js
+# 7. Process Module in Node.js
 
 The `process` module in Node.js provides a way to interact with the current Node.js process. It is a global object, meaning it can be accessed anywhere without requiring additional imports. This module is particularly useful for accessing environment variables, controlling the Node.js runtime, and managing input/output streams.
 
@@ -1505,7 +1745,7 @@ throw new Error("This will trigger uncaughtException");
 
 The `process` module is a fundamental part of Node.js that facilitates interaction with the runtime environment. By understanding its properties, methods, and events, developers can build more efficient and robust applications.
 
-# Stream and Crypto Modules in Node.js
+# 8. Stream and Crypto Modules in Node.js
 
 ## Stream Module
 
@@ -1718,192 +1958,7 @@ crypto.pbkdf2("password", "salt", 100000, 64, "sha512", (err, derivedKey) => {
 3. Generating and verifying digital signatures.
 4. Securing communication in network applications.
 
-# Timers Module in Node.js
-
-The `timers` module in Node.js provides functions to execute code after a specified delay or at regular intervals. It plays a crucial role in asynchronous programming by allowing scheduled execution of callbacks.
-
-## Core Timer Functions
-
-### 1. `setTimeout()`
-
-Executes a function after a specified delay (in milliseconds).
-
-#### Syntax
-
-```javascript
-setTimeout(callback, delay, ...args);
-```
-
-- `callback`: The function to execute.
-- `delay`: Time in milliseconds to wait before execution.
-- `...args`: Arguments to pass to the `callback`.
-
-#### Example
-
-```javascript
-setTimeout(() => {
-  console.log("Executed after 2 seconds");
-}, 2000);
-```
-
----
-
-### 2. `clearTimeout()`
-
-Cancels a `setTimeout()` before it executes.
-
-#### Syntax
-
-```javascript
-clearTimeout(timeoutId);
-```
-
-- `timeoutId`: The identifier returned by `setTimeout()`.
-
-#### Example
-
-```javascript
-const timerId = setTimeout(() => {
-  console.log("This will not execute");
-}, 2000);
-
-clearTimeout(timerId);
-```
-
----
-
-### 3. `setInterval()`
-
-Executes a function repeatedly at specified intervals (in milliseconds).
-
-#### Syntax
-
-```javascript
-setInterval(callback, delay, ...args);
-```
-
-- `callback`: The function to execute.
-- `delay`: Time in milliseconds between each execution.
-- `...args`: Arguments to pass to the `callback`.
-
-#### Example
-
-```javascript
-const intervalId = setInterval(() => {
-  console.log("Executed every 1 second");
-}, 1000);
-```
-
----
-
-### 4. `clearInterval()`
-
-Stops a `setInterval()` from continuing execution.
-
-#### Syntax
-
-```javascript
-clearInterval(intervalId);
-```
-
-- `intervalId`: The identifier returned by `setInterval()`.
-
-#### Example
-
-```javascript
-const intervalId = setInterval(() => {
-  console.log("This will stop after 5 seconds");
-}, 1000);
-
-setTimeout(() => {
-  clearInterval(intervalId);
-}, 5000);
-```
-
----
-
-### 5. `setImmediate()`
-
-Executes a function immediately after the current event loop completes.
-
-#### Syntax
-
-```javascript
-setImmediate(callback, ...args);
-```
-
-- `callback`: The function to execute.
-- `...args`: Arguments to pass to the `callback`.
-
-#### Example
-
-```javascript
-setImmediate(() => {
-  console.log("Executed immediately after the current event loop");
-});
-```
-
----
-
-### 6. `clearImmediate()`
-
-Cancels a `setImmediate()` before it executes.
-
-#### Syntax
-
-```javascript
-clearImmediate(immediateId);
-```
-
-- `immediateId`: The identifier returned by `setImmediate()`.
-
-#### Example
-
-```javascript
-const immediateId = setImmediate(() => {
-  console.log("This will not execute");
-});
-
-clearImmediate(immediateId);
-```
-
----
-
-## Differences Between Timers
-
-| Function         | Use Case                                 | Example Timing               |
-| ---------------- | ---------------------------------------- | ---------------------------- |
-| `setTimeout()`   | Delay execution once                     | After the specified delay    |
-| `setInterval()`  | Execute repeatedly at fixed intervals    | Every specified interval     |
-| `setImmediate()` | Execute immediately after I/O operations | At the end of the event loop |
-
----
-
-## Use Cases
-
-### 1. Delayed Execution
-
-Using `setTimeout()` for delayed tasks like animations, API calls, or retries.
-
-### 2. Periodic Tasks
-
-Using `setInterval()` for repeated tasks like polling or sending heartbeat signals.
-
-### 3. Immediate Callbacks
-
-Using `setImmediate()` for tasks that must run after the current phase of the event loop.
-
----
-
-## Best Practices
-
-1. **Avoid Memory Leaks**: Always clear timers (`clearTimeout`, `clearInterval`, `clearImmediate`) when they are no longer needed.
-2. **Use `setImmediate` Over `setTimeout` (0ms)**: `setImmediate` is faster and more efficient than `setTimeout(fn, 0)`.
-3. **Manage Long-Running Intervals**: Use logic to pause or stop intervals when they are no longer needed.
-
----
-
-# Timers Module in Node.js
+# 9. Timers Module in Node.js
 
 The `timers` module in Node.js provides functions to execute code after a specified delay or at regular intervals. It plays a crucial role in asynchronous programming by allowing scheduled execution of callbacks.
 
@@ -2094,7 +2149,7 @@ For more details, refer to the official documentation:
 
 ---
 
-# Cluster Module in Node.js
+# 10. Cluster Module in Node.js
 
 The `cluster` module enables the creation of child processes that share the same server port, which is particularly useful for utilizing multi-core systems effectively.
 
@@ -2182,7 +2237,7 @@ cluster.on("exit", (worker, code, signal) => {
 
 ---
 
-# Child Process Module in Node.js
+# 11. Child Process Module in Node.js
 
 The `child_process` module provides the ability to spawn child processes and communicate with them.
 
